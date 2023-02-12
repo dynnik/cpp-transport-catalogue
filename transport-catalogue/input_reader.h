@@ -1,1 +1,5 @@
-// место для вашего кода
+#pragma once
+#include <string>
+#include <deque>
+
+std::deque<std::string> InputReader();
