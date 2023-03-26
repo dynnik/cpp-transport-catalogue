@@ -2,8 +2,8 @@
 
 #include "transport_catalogue.h"
 
-void Stat_Reader(catalogue::TransportCatalogue t);
+void Stat_Reader(std::istream& in, catalogue::TransportCatalogue t);
 
-void PrintBusInfo(catalogue::BusRoute r);
+void PrintBusInfo(std::ostream& out, catalogue::BusRoute& r);
 
-void PrintStopInfo(const catalogue::StopRoutes& s);
+void PrintStopInfo(std::ostream& out, const catalogue::StopRoutes& s);
