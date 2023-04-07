@@ -1,12 +1,14 @@
-#include "geo.h"
 #include "transport_catalogue.h"
-#include "stat_reader.h"
-#include <iostream>
+#include "json_reader.h"
+#include "map_renderer.h"
+
+void QueryProcessing(transport_catalogue::TransportCatalogue& transport_catalogue, std::istream& input, std::ostream& output) {
+    MapRenderer map_render;
+    request_handler::RequestHandler request_handler(transport_catalogue, map_render);
+    json_reader::SequentialRequestProcessing(transport_catalogue, map_render, input, output, request_handler);
+}
 
 int main() {
-    InputResult res;
-    InputReader(std::cin, res);
-    catalogue::TransportCatalogue t(res);
-    Stat_Reader(std::cin, t);
-    return 0;
+    transport_catalogue::TransportCatalogue transport_catalogue;
+    QueryProcessing(transport_catalogue, std::cin, std::cout);
 }
