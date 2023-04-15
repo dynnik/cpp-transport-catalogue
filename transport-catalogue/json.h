@@ -9,11 +9,11 @@
 namespace json {
 
     class Node;
-    // Сохраните объявления Dict и Array без изменения
+    // Г‘Г®ГµГ°Г Г­ГЁГІГҐ Г®ГЎГєГїГўГ«ГҐГ­ГЁГї Dict ГЁ Array ГЎГҐГ§ ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГї
     using Dict = std::map<std::string, Node>;
     using Array = std::vector<Node>;
 
-    // Эта ошибка должна выбрасываться при ошибках парсинга JSON
+    // ГќГІГ  Г®ГёГЁГЎГЄГ  Г¤Г®Г«Г¦Г­Г  ГўГ»ГЎГ°Г Г±Г»ГўГ ГІГјГ±Гї ГЇГ°ГЁ Г®ГёГЁГЎГЄГ Гµ ГЇГ Г°Г±ГЁГ­ГЈГ  JSON
     class ParsingError : public std::runtime_error {
     public:
         using runtime_error::runtime_error;
