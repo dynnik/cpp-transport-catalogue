@@ -1,5 +1,6 @@
 #pragma once
 #include "transport_catalogue.h"
+#include "transport_router.h"
 #include "map_renderer.h"
 #include "json.h"
 #include <optional>
@@ -10,8 +11,10 @@ struct Requests {
 };
 
 
-namespace request_handler {
-    class RequestHandler {
+namespace request_handler 
+{
+    class RequestHandler 
+    {
     public:
         RequestHandler(const transport_catalogue::TransportCatalogue& transport_catalogue, const MapRenderer& map_render);
 
