@@ -2,7 +2,8 @@
 
 using namespace std;
 
-namespace json {
+namespace json 
+{
 
     Node::Node(Array array) :
         value_(std::move(array)) {}
