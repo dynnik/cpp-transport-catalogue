@@ -15,10 +15,15 @@ namespace transport_catalogue {
 	class TransportCatalogue final {
 	public:
 
+		std::deque<Stop> GetStops() const{ return stops_; }
+		std::deque<Bus> GetBuses() const{ return buses_; }
+		
 		BusInfo GetBusInfo(std::string_view name) const;
 		StopInfo GetStopInfo(std::string_view name) const;
+
 		std::vector<const Stop*> GetBusRouteByName(const std::string_view route_name) const;
 		Stop GetStopByName(const std::string_view stop_name) const;
+
 		std::vector<geo::Coordinates> GetStopsWithCoordinates() const;
 
 		void AddStop(std::string stop_name, geo::Coordinates coordinates);
