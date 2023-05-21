@@ -3,9 +3,11 @@
 #include <vector>
 #include "geo.h"
 
-namespace transport_catalogue {
+namespace transport_catalogue 
+{
 
-	struct BusInfo {
+	struct BusInfo 
+	{
 		std::string_view name;
 		size_t count_all_stops;
 		size_t count_unique_stops;
@@ -14,18 +16,21 @@ namespace transport_catalogue {
 		bool is_empty = true;
 	};
 
-	struct StopInfo {
+	struct StopInfo 
+	{
 		std::string_view name;
 		std::vector<std::string_view> stop_buses;
 		bool is_empty = true;
 	};
 
-	struct Stop {
+	struct Stop 
+	{
 		std::string_view name;
 		geo::Coordinates coordinates;
 	};
 
-	struct Bus {
+	struct Bus 
+	{
 		std::string_view name;
 		std::vector<const Stop*> stops;
 		bool is_circle;
