@@ -27,7 +27,8 @@ namespace transport_catalogue {
 	}
 
 	//Adds new bus with collateral connections
-	void TransportCatalogue::AddBus(std::string bus_name, std::vector<std::string>& vect_stops, bool is_circle) {
+	void TransportCatalogue::AddBus(std::string bus_name, std::vector<std::string>& vect_stops, bool is_circle) 
+	{
 		if (buses_index_.count(bus_name) == 0) {
 			std::vector<std::string> new_stops;
 			if (!vect_stops.empty()) {
@@ -60,16 +61,20 @@ namespace transport_catalogue {
 	}
 
 	//Returns all stops with their coords
-	std::vector<geo::Coordinates> TransportCatalogue::GetStopsWithCoordinates() const {
-		if (stops_with_routes_.size() > 0) {
+	std::vector<geo::Coordinates> TransportCatalogue::GetStopsWithCoordinates() const 
+	{
+		if (stops_with_routes_.size() > 0) 
+		{
 			return stops_with_routes_;
 		}
 		return {};
 	}
 
 	//Returns bus info by its name
-	transport_catalogue::BusInfo TransportCatalogue::GetBusInfo(std::string_view name) const {
-		if (buses_index_.count(name) > 0) {
+	transport_catalogue::BusInfo TransportCatalogue::GetBusInfo(std::string_view name) const 
+	{
+		if (buses_index_.count(name) > 0) 
+		{
 			BusInfo bus_info{};
 			const transport_catalogue::Bus* bus = buses_index_.at(name);
 			std::vector<const transport_catalogue::Stop*> all_stops = bus->stops;
@@ -78,7 +83,8 @@ namespace transport_catalogue {
 			++stop2;
 			double road_distance = 0.0;
 			double geo_road_length = 0.0;
-			while (stop2 != all_stops.end()) {
+			while (stop2 != all_stops.end()) 
+			{
 				geo_road_length += ComputeDistance((*stop1)->coordinates, (*stop2)->coordinates);
 				road_distance += GetStopToStopDistance(*stop1, *stop2);
 				++stop1;
@@ -94,7 +100,8 @@ namespace transport_catalogue {
 	}
 
 	//Returns stop's info by its name
-	transport_catalogue::StopInfo TransportCatalogue::GetStopInfo(std::string_view name) const {
+	transport_catalogue::StopInfo TransportCatalogue::GetStopInfo(std::string_view name) const 
+	{
 		if (stop_index_.count(name) > 0) {
 			std::vector<std::string_view> buses;
 			auto stop_buses = GetBusesByStop(name);
@@ -110,7 +117,8 @@ namespace transport_catalogue {
 	}
 
 	//Returns route's info by its name
-	std::vector<const Stop*> TransportCatalogue::GetBusRouteByName(std::string_view name) const {
+	std::vector<const Stop*> TransportCatalogue::GetBusRouteByName(std::string_view name) const 
+	{
 		if (buses_index_.count(name) > 0) {
 			return buses_index_.at(name)->stops;
 		}
@@ -119,7 +127,8 @@ namespace transport_catalogue {
 	}
 
 	//Returns stop by its name
-	Stop TransportCatalogue::GetStopByName(const std::string_view stop_name) const {
+	Stop TransportCatalogue::GetStopByName(const std::string_view stop_name) const 
+	{
 		if (stop_index_.count(stop_name) > 0) {
 			return { stop_index_.at(stop_name)->name, stop_index_.at(stop_name)->coordinates };
 		}
@@ -128,21 +137,26 @@ namespace transport_catalogue {
 	}
 
 	//Returns all buses that have such stop in their route
-	std::set<std::string_view> TransportCatalogue::GetBusesByStop(std::string_view stop_name) const {
-		if (buses_by_stop_.count(stop_name)) {
+	std::set<std::string_view> TransportCatalogue::GetBusesByStop(std::string_view stop_name) const 
+	{
+		if (buses_by_stop_.count(stop_name)) 
+		{
 			return buses_by_stop_.at(stop_name);
 		}
 		static std::set<std::string_view> buses{};
 		return buses;
 	}
 
+
 	//Returns the distance between two stops
-	double TransportCatalogue::GetStopToStopDistance(const Stop* from, const Stop* to) const {
+	double TransportCatalogue::GetStopToStopDistance(const Stop* from, const Stop* to) const 
+	{
 		return stop_to_stop_distances_.at({ from, to });
 	}
 
 	//Checks whether the stop exists or not
-	bool TransportCatalogue::IsStopExist(std::string name) const {
+	bool TransportCatalogue::IsStopExist(std::string name) const 
+	{
 		if (stop_index_.count(name) > 0) {
 			return true;
 		}
@@ -150,12 +164,14 @@ namespace transport_catalogue {
 	}
 
 	//Returns all stops from the bus route
-	std::vector<const Stop*> TransportCatalogue::GetStopsByBusName(std::string name) const {
+	std::vector<const Stop*> TransportCatalogue::GetStopsByBusName(std::string name) const 
+	{
 		return buses_index_.at(name)->stops;
 	}
 
 	//Returns bus by its name
-	const Bus* TransportCatalogue::GetBusByName(const std::string name) const {
+	const Bus* TransportCatalogue::GetBusByName(const std::string name) const 
+	{
 		if (buses_index_.count(name) > 0) {
 			return buses_index_.at(name);
 		}
