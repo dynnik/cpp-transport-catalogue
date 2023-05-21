@@ -2,8 +2,11 @@
 #include "json_reader.h"
 #include "map_renderer.h"
 
-void QueryProcessing(transport_catalogue::TransportCatalogue& transport_catalogue, std::istream& input, std::ostream& output) {
+
+void QueryProcessing(transport_catalogue::TransportCatalogue& transport_catalogue, std::istream& input, std::ostream& output) 
+{
     MapRenderer map_render;
+
     request_handler::RequestHandler request_handler(transport_catalogue, map_render);
     json_reader::SequentialRequestProcessing(transport_catalogue, map_render, input, output, request_handler);
 }
