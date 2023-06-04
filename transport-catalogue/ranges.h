@@ -5,18 +5,18 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace ranges {
+namespace ranges 
+{
 
     template <typename It>
-    class Range 
+    class Range
     {
     public:
         using ValueType = typename std::iterator_traits<It>::value_type;
 
         Range(It begin, It end)
             : begin_(begin)
-            , end_(end) 
-        {
+            , end_(end) {
         }
         It begin() const 
         {
@@ -37,5 +37,4 @@ namespace ranges {
     {
         return Range{ container.begin(), container.end() };
     }
-
 }  // namespace ranges
