@@ -1,53 +1,46 @@
 #pragma once
-#include <unordered_set>
-#include <unordered_map>
-#include <string>
-#include <deque>
-#include <set>
+
+#include "geo.h"
 #include "domain.h"
 
-namespace transport_catalogue {
+#include <deque>
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <string_view>
+#include <map>
 
-	struct StopPairHash {
-		size_t operator()(const std::pair<const Stop*, const Stop*>& p) const;
-	};
+namespace transport
+{
 
-	class TransportCatalogue final {
-	public:
+    using namespace domain;
 
-		std::deque<Stop> GetStops() const{ return stops_; }
-		std::deque<Bus> GetBuses() const{ return buses_; }
-		
-		BusInfo GetBusInfo(std::string_view name) const;
-		StopInfo GetStopInfo(std::string_view name) const;
+    class Catalogue
+    {
+    public:
+        void AddStop(const std::string& name, const geo::Coordinates& coordinates);
+        void AddBus(const std::string& num, const std::vector<Stop*>& stops, bool is_circle);
 
-		std::vector<const Stop*> GetBusRouteByName(const std::string_view route_name) const;
-		Stop GetStopByName(const std::string_view stop_name) const;
+        Stop* FindStop(const std::string_view stop);
+        const Stop* FindStop(const std::string_view stop) const;
 
-		std::vector<geo::Coordinates> GetStopsWithCoordinates() const;
+        Bus* FindBus(const std::string_view bus_num);
+        const Bus* FindBus(const std::string_view bus_num) const;
 
-		void AddStop(std::string stop_name, geo::Coordinates coordinates);
-		void AddBus(std::string bus_name, std::vector<std::string>& vect_stops, bool is_circle);
+        std::map<std::string_view, Bus*> GetBusesOnStop(const std::string_view stop_name);
+        const std::map<std::string_view, Bus*> GetBusesOnStop(const std::string_view stop_name) const;
 
-		std::set<std::string_view> GetBusesByStop(std::string_view stop_name) const;
-		const Bus* GetBusByName(const std::string name) const;
+        void SetDistance(Stop* from, Stop* to, int dist);
+        int GetDistance(const Stop* from, const Stop* to) const;
 
-		double GetStopToStopDistance(const Stop* from, const Stop* to) const;
-		std::vector<const Stop*> GetStopsByBusName(std::string name) const;
+        const std::map <std::string_view, Bus*>& GetSortedAllBuses() const;
+        const std::map <std::string_view, Stop*>& GetSortedAllStops() const;
 
-		bool IsStopExist(std::string) const;
-
-		void SetStopToStopDistances(const std::string stop_name, const std::string other_stop_name, double distance);
-
-
-	private:
-		std::deque<Bus> buses_;
-		std::deque<Stop> stops_;
-		std::deque<std::string> stop_and_buses_names_;
-		std::vector<geo::Coordinates> stops_with_routes_;
-		std::unordered_map<std::string_view, const Bus*> buses_index_;
-		std::unordered_map<std::string_view, const Stop*> stop_index_;
-		std::unordered_map<std::string_view, std::set<std::string_view>> buses_by_stop_;
-		std::unordered_map<std::pair<const Stop*, const Stop*>, double, StopPairHash> stop_to_stop_distances_;
-	};
+    private:
+        std::deque<Stop> all_stops_;
+        std::deque<Bus> all_buses_;
+        std::unordered_map < std::string_view, std::map<std::string_view, Bus*>> stop_to_buses_;
+        std::map < std::string_view, Stop* > stops_list_;
+        std::map < std::string_view, Bus* > buses_list_;
+    };
 }
