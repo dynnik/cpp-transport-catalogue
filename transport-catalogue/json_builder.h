@@ -1,92 +1,92 @@
 #pragma once
 
 #include "json.h"
+#include <string>
+#include <vector>
+#include <utility>
+#include <optional>
 
-namespace json {
-    class ItemContext;
-    class KeyItemContext;
-    class ValueContext;
-    class DictItemContext;
-    class ArrayItemContext;
-
-    class Builder {
-    public:
-        Builder();
-        KeyItemContext Key(std::string key);
-        Builder& Value(Node value);
-        DictItemContext StartDict();
-        ArrayItemContext StartArray();
-        Builder& EndDict();
-        Builder& EndArray();
-        Node Build();
-
-    private:
-        Node root_;
-        std::vector<Node*> nodes_stack_;
-
-        template <typename T>
-        void InputResult(T elem) {
-            if (nodes_stack_.back()->IsArray()) {
-                const_cast<Array&>(nodes_stack_.back()->AsArray()).push_back(elem);
-                nodes_stack_.emplace_back(&const_cast<Array&>(nodes_stack_.back()->AsArray()).back());
-            }
-            else {
-                *nodes_stack_.back() = elem;
-            }
-        }
+namespace json 
+{
+    enum class Step 
+    {
+        BUILD,
+        ARR,
+        DICT
     };
+    class DictItemContext;
+    class DictValueContext;
+    class ArrayContext;
 
-    class ItemContext
+    class Builder 
     {
     public:
-        ItemContext(Builder& builder) :builder_(builder) {};
-        KeyItemContext Key(std::string key);
-        Builder& Value(Node value);
+        Builder()
+        {
+            step_stack_.push_back(Step::BUILD);
+        }
+
         DictItemContext StartDict();
-        ArrayItemContext StartArray();
         Builder& EndDict();
+        
+        ArrayContext StartArray();
         Builder& EndArray();
+        
+        DictValueContext Key(const std::string& key);
+        Builder& Value(const Node::Value& val);
+        
+        Node Build() const;
+        
+        void AddNode(Node&& node);
+
+    private:
+        std::optional<Node> root_;
+        std::vector<Step> step_stack_;
+        std::vector< std::optional<std::string> > keys_;
+        int dicts_open_ = 0;
+        int arrays_open_ = 0;
+        std::vector<std::vector<Node>> all_arrays_;
+        std::vector< std::vector<std::pair<std::string, Node>> > all_dicts_;
+    };
+
+    class DictItemContext 
+    {
+    public:
+        DictItemContext(Builder& builder)
+            : builder_(builder) {}
+        
+        DictValueContext Key(const std::string& key);
+        Builder& EndDict();
     private:
         Builder& builder_;
     };
 
-    class KeyItemContext :public ItemContext
+    class DictValueContext 
     {
     public:
-        KeyItemContext(Builder& builder) :ItemContext(builder) {};
-        KeyItemContext Key(std::string key) = delete;
-        ValueContext Value(Node value);
-        Builder& EndDict() = delete;
-        Builder& EndArray() = delete;
+        DictValueContext(Builder& builder)
+            : builder_(builder) {}
+
+        DictItemContext Value(const Node::Value& val);
+        DictItemContext StartDict();
+        ArrayContext StartArray();
+
+    private:
+        Builder& builder_;
     };
 
-    class ValueContext :public ItemContext
+    class ArrayContext 
     {
     public:
-        ValueContext(Builder& builder) :ItemContext(builder) {};
-        Builder& Value(Node value) = delete;
-        DictItemContext StartDict() = delete;
-        ArrayItemContext StartArray() = delete;
-        Builder& EndArray() = delete;
-    };
+        ArrayContext(Builder& builder)
+            : builder_(builder) {}
 
-    class DictItemContext :public ItemContext
-    {
-    public:
-        DictItemContext(Builder& builder) :ItemContext(builder) {};
-        Builder& Value(Node value) = delete;
-        DictItemContext StartDict() = delete;
-        ArrayItemContext StartArray() = delete;
-        Builder& EndArray() = delete;
-    };
+        ArrayContext Value(const Node::Value& val);
+        DictItemContext StartDict();
+        ArrayContext StartArray();
+        Builder& EndArray();
 
-    class ArrayItemContext :public ItemContext
-    {
-    public:
-        ArrayItemContext(Builder& builder) :ItemContext(builder) {};
-        KeyItemContext Key(std::string key) = delete;
-        ArrayItemContext Value(Node value) { return ItemContext::Value(std::move(value)); }
-        Builder& EndDict() = delete;
+    private:
+        Builder& builder_;
     };
-
-}//namespace json
+} // namespace json
