@@ -1,36 +1,35 @@
 #pragma once
+
 #include "transport_catalogue.h"
 #include "transport_router.h"
-#include "map_renderer.h"
+#include "domain.h"
 #include "json.h"
-#include <optional>
+#include "map_renderer.h"
+#include "json_builder.h"
 
-struct Requests {
-    std::deque<json::Node> stop_requests;
-    std::deque<json::Node> bus_requests;
-};
+#include <utility>
+#include <string>
+#include <string_view>
 
-
-namespace request_handler 
+class RequestHandler 
 {
-    class RequestHandler 
-    {
-    public:
-        RequestHandler(const transport_catalogue::TransportCatalogue& transport_catalogue, const MapRenderer& map_render);
+public:
+    RequestHandler(const transport::Catalogue& catalogue,
+                   const transport::Router& router, 
+                   const renderer::MapRenderer& renderer);
 
-        std::optional<transport_catalogue::BusInfo> GetBusInfo(const std::string_view bus_name) const;
-        std::optional<transport_catalogue::StopInfo> GetStopInfo(const std::string_view stop_name) const;
+    void JsonStatRequests(const json::Node& json_doc, std::ostream& output);
 
-        std::vector<geo::Coordinates> GetCoordinates() const;
+    svg::Document RenderMap() const;
 
-        const transport_catalogue::Bus* GetBus(const std::string bus_name) const;
-        transport_catalogue::Stop GetStop(const std::string_view stop_name) const;
+private:
+    const transport::Catalogue& db_;
+    const transport::Router& router_;
+    const renderer::MapRenderer& renderer_;
 
-
-        void RenderMap(std::ostream& output) const;
-
-    private:
-        const transport_catalogue::TransportCatalogue& db_;
-        const MapRenderer& renderer_;
-    };
-}
+    json::Node FindStopRequestProcessing(const json::Dict& request_map);
+    json::Node FindBusRequestProcessing(const json::Dict& request_map);
+    
+    json::Node BuildMapRequestProcessing(const json::Dict& request_map);
+    json::Node BuildRouteRequestProcessing(const json::Dict& request_map);
+};
